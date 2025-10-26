@@ -13,7 +13,7 @@ return [
             'driver' => 'mysql',
             'host' => '127.0.0.1',
             'port' => '8888',
-            'database' => 'todo_tracker_saas',
+            'database' => 'vibe_templates',
             'username' => 'vibe_templates',
             'password' => 'vibe_templates_password',
             'unix_socket' => '',

@@ -2,11 +2,11 @@
 -- MySQL Database Creation and Schema Setup
 
 -- Create database if it doesn't exist
-CREATE DATABASE IF NOT EXISTS `todo_tracker_saas` 
+CREATE DATABASE IF NOT EXISTS `vibe_templates` 
 DEFAULT CHARACTER SET utf8mb4 
 COLLATE utf8mb4_unicode_ci;
 
-USE `todo_tracker_saas`;
+USE `vibe_templates`;
 
 -- Users table with enhanced fields for SaaS
 CREATE TABLE `users` (

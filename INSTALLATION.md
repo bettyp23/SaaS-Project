@@ -13,7 +13,7 @@
 Your MySQL database should be configured with:
 - **Host:** 127.0.0.1
 - **Port:** 8889
-- **Database:** todo_tracker_saas
+- **Database:** vibe_templates
 - **Username:** vibe_templates
 - **Password:** vibe_templates_password
 
@@ -30,15 +30,15 @@ composer install
 Run the SQL schema file to create all necessary tables:
 
 ```bash
-mysql -h 127.0.0.1 -P 8889 -u vibe_templates -p todo_tracker_saas < database-schema.sql
+mysql -h 127.0.0.1 -P 8889 -u vibe_templates -p vibe_templates < database-schema.sql
 ```
 
 Or create the database manually and run the schema:
 
 ```sql
 mysql -h 127.0.0.1 -P 8889 -u vibe_templates -pvibe_templates_password
-CREATE DATABASE IF NOT EXISTS todo_tracker_saas;
-USE todo_tracker_saas;
+CREATE DATABASE IF NOT EXISTS vibe_templates;
+USE vibe_templates;
 SOURCE database-schema.sql;
 ```
 
@@ -56,7 +56,7 @@ APP_URL=http://localhost
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=8889
-DB_DATABASE=todo_tracker_saas
+DB_DATABASE=vibe_templates
 DB_USERNAME=vibe_templates
 DB_PASSWORD=vibe_templates_password
 
@@ -211,7 +211,7 @@ If you can't connect to the database:
 
 1. Verify MySQL is running on port 8889
 2. Check credentials in `.env` file
-3. Ensure the database exists: `CREATE DATABASE todo_tracker_saas;`
+3. Ensure the database exists: `CREATE DATABASE vibe_templates;`
 
 ### Permission Issues
 

@@ -48,7 +48,7 @@ return [
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '8889'),
-            'database' => env('DB_DATABASE', 'todo_tracker_saas'),
+            'database' => env('DB_DATABASE', 'vibe_templates'),
             'username' => env('DB_USERNAME', 'vibe_templates'),
             'password' => env('DB_PASSWORD', 'vibe_templates_password'),
             'unix_socket' => env('DB_SOCKET', ''),
