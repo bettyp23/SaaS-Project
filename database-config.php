@@ -12,7 +12,7 @@ return [
         'mysql' => [
             'driver' => 'mysql',
             'host' => '127.0.0.1',
-            'port' => '8888',
+            'port' => '8889',
             'database' => 'vibe_templates',
             'username' => 'vibe_templates',
             'password' => 'vibe_templates_password',
