@@ -35,7 +35,7 @@ if (file_exists(__DIR__ . '/.env')) {
 // Get database credentials from environment
 $host = getenv('DB_HOST') ?: '127.0.0.1';
 $port = getenv('DB_PORT') ?: '8889';
-$database = getenv('DB_DATABASE') ?: 'vibe_templates';
+$database = getenv('DB_DATABASE') ?: 'todo_tracker_saas';
 $username = getenv('DB_USERNAME') ?: 'vibe_templates';
 $password = getenv('DB_PASSWORD') ?: 'vibe_templates_password';
 
