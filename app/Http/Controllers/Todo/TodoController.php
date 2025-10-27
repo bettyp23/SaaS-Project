@@ -129,10 +129,74 @@ class TodoController extends Controller
         return view('todos.kanban', compact('todos'));
     }
 
-    public function calendar()
+    public function calendar(Request $request)
     {
-        $todos = Auth::user()->todos()->whereNotNull('due_date')->get();
-        return view('todos.calendar', compact('todos'));
+        $user = Auth::user();
+        
+        // Get current month or requested month
+        $month = $request->get('month', now()->format('Y-m'));
+        $startDate = \Carbon\Carbon::parse($month . '-01')->startOfMonth();
+        $endDate = $startDate->copy()->endOfMonth();
+        
+        // Get all todos with due dates for the month
+        $todos = $user->todos()
+            ->whereNotNull('due_date')
+            ->whereBetween('due_date', [$startDate, $endDate])
+            ->with(['list', 'tags'])
+            ->orderBy('due_date')
+            ->get();
+        
+        // Group todos by date
+        $tasksByDate = [];
+        foreach ($todos as $todo) {
+            $date = \Carbon\Carbon::parse($todo->due_date)->format('Y-m-d');
+            if (!isset($tasksByDate[$date])) {
+                $tasksByDate[$date] = [];
+            }
+            $tasksByDate[$date][] = $todo;
+        }
+        
+        // Get task counts per day
+        $dailyCounts = [];
+        $todosCount = $user->todos()->whereNotNull('due_date')->get();
+        foreach ($todosCount as $todo) {
+            $date = \Carbon\Carbon::parse($todo->due_date)->format('Y-m-d');
+            if (!isset($dailyCounts[$date])) {
+                $dailyCounts[$date] = ['total' => 0, 'pending' => 0, 'completed' => 0, 'overdue' => 0];
+            }
+            $dailyCounts[$date]['total']++;
+            if ($todo->status === 'completed') {
+                $dailyCounts[$date]['completed']++;
+            } elseif ($todo->status === 'pending') {
+                $dailyCounts[$date]['pending']++;
+            }
+            if ($todo->due_date < now() && $todo->status !== 'completed') {
+                $dailyCounts[$date]['overdue']++;
+            }
+        }
+        
+        // Get lists for filtering
+        $lists = $user->todoLists()->get();
+        
+        // Calculate calendar grid data
+        $firstDayOfWeek = $startDate->dayOfWeek; // 0 = Sunday, 6 = Saturday
+        $daysInMonth = $startDate->daysInMonth;
+        $prevMonth = $startDate->copy()->subMonth();
+        $nextMonth = $startDate->copy()->addMonth();
+        
+        return view('todos.calendar', compact(
+            'todos',
+            'tasksByDate',
+            'dailyCounts',
+            'month',
+            'startDate',
+            'endDate',
+            'firstDayOfWeek',
+            'daysInMonth',
+            'prevMonth',
+            'nextMonth',
+            'lists'
+        ));
     }
 
     public function archive()
