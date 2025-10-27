@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\SubscriptionController;
+use App\Http\Controllers\Api\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('enable-2fa', [AuthController::class, 'enable2FA']);
         Route::post('disable-2fa', [AuthController::class, 'disable2FA']);
         Route::post('verify-2fa', [AuthController::class, 'verify2FA']);
+    });
+
+    // Dashboard routes
+    Route::prefix('dashboard')->group(function () {
+        Route::get('stats', [DashboardController::class, 'stats']);
     });
 
     // User routes
