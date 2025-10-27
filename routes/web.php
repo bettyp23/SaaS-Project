@@ -39,19 +39,43 @@ Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
+    // Tasks (All Tasks page)
+    Route::get('/tasks', [TodoController::class, 'index'])->name('tasks.index');
+    Route::get('/tasks/create', [TodoController::class, 'create'])->name('tasks.create');
+    Route::post('/tasks', [TodoController::class, 'store'])->name('tasks.store');
+    Route::get('/tasks/{todo}/edit', [TodoController::class, 'edit'])->name('tasks.edit');
+    Route::put('/tasks/{todo}', [TodoController::class, 'update'])->name('tasks.update');
+    Route::delete('/tasks/{todo}', [TodoController::class, 'destroy'])->name('tasks.destroy');
+    Route::post('/tasks/{todo}/toggle-status', [TodoController::class, 'toggleStatus'])->name('tasks.toggle-status');
+    
+    // Kanban Board
+    Route::get('/kanban', [TodoController::class, 'kanban'])->name('kanban');
+    Route::put('/tasks/{todo}/update-status', [TodoController::class, 'updateStatus'])->name('tasks.update-status');
+    
+    // Calendar
+    Route::get('/calendar', [TodoController::class, 'calendar'])->name('calendar');
+    
+    // Categories (Tags)
+    Route::get('/categories', [TagController::class, 'index'])->name('categories.index');
+    Route::post('/categories', [TagController::class, 'store'])->name('categories.store');
+    Route::delete('/categories/{tag}', [TagController::class, 'destroy'])->name('categories.destroy');
+    
+    // Archive
+    Route::get('/archive', [TodoController::class, 'archive'])->name('archive');
+    Route::post('/tasks/{todo}/restore', [TodoController::class, 'restore'])->name('tasks.restore');
+    
+    // Settings
+    Route::get('/settings', [ProfileController::class, 'settings'])->name('settings');
+    
     // Profile
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [ProfileController::class, 'changePassword'])->name('profile.password');
     
-    // Todos
-    Route::resource('todos', TodoController::class);
-    Route::post('/todos/{todo}/toggle-status', [TodoController::class, 'toggleStatus'])->name('todos.toggle-status');
-    
     // Teams
     Route::resource('teams', TeamController::class);
     
-    // Tags
+    // Tags (API endpoint)
     Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
     Route::post('/tags', [TagController::class, 'store'])->name('tags.store');
     

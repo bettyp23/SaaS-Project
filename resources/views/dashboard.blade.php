@@ -151,6 +151,31 @@
             font-weight: 700;
             color: #667eea;
         }
+        .recent-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+        .recent-section h2 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+        }
+        .todo-item:last-child {
+            border-bottom: none;
+        }
+        .todo-title {
+            flex: 1;
+            color: #333;
+        }
         .mobile-toggle {
             display: none;
             position: fixed;
@@ -244,22 +269,33 @@
 
             <div class="stats-grid">
                 <div class="stat-card">
-                    <h3>Total Todos</h3>
-                    <div class="number">0</div>
+                    <h3>Total Tasks</h3>
+                    <div class="number">{{ $totalTodos }}</div>
                 </div>
                 <div class="stat-card">
                     <h3>Completed</h3>
-                    <div class="number">0</div>
+                    <div class="number">{{ $completedTodos }}</div>
                 </div>
                 <div class="stat-card">
                     <h3>In Progress</h3>
-                    <div class="number">0</div>
+                    <div class="number">{{ $inProgressTodos }}</div>
                 </div>
                 <div class="stat-card">
                     <h3>Pending</h3>
-                    <div class="number">0</div>
+                    <div class="number">{{ $pendingTodos }}</div>
                 </div>
             </div>
+
+            @if($recentTodos->count() > 0)
+            <div class="recent-section">
+                <h2>Recent Tasks</h2>
+                @foreach($recentTodos as $todo)
+                    <div class="todo-item">
+                        <div class="todo-title">{{ $todo->title }}</div>
+                    </div>
+                @endforeach
+            </div>
+            @endif
         </div>
     </div>
 
@@ -269,7 +305,6 @@
             sidebar.classList.toggle('open');
         }
 
-        // Close sidebar when clicking outside on mobile
         document.addEventListener('click', function(event) {
             const sidebar = document.getElementById('sidebar');
             const toggle = document.querySelector('.mobile-toggle');

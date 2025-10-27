@@ -19,6 +19,12 @@ class ProfileController extends Controller
         return view('profile.index');
     }
 
+    public function settings()
+    {
+        $user = Auth::user();
+        return view('settings', compact('user'));
+    }
+
     public function update(Request $request)
     {
         $user = Auth::user();

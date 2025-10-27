@@ -17,7 +17,7 @@ class TodoController extends Controller
 
     public function index(Request $request)
     {
-        $query = Auth::user()->todos()->with('list');
+        $query = Auth::user()->todos()->with('list')->withTrashed(false);
 
         // Filters
         if ($request->has('status')) {
@@ -30,6 +30,14 @@ class TodoController extends Controller
 
         if ($request->has('list_id')) {
             $query->where('list_id', $request->list_id);
+        }
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
         }
 
         $todos = $query->orderBy('sort_order')->get();
@@ -63,7 +71,7 @@ class TodoController extends Controller
             'status' => 'pending',
         ]);
 
-        return redirect()->route('todos.index')->with('success', 'Todo created successfully.');
+        return redirect()->route('tasks.index')->with('success', 'Todo created successfully.');
     }
 
     public function show(Todo $todo)
@@ -94,14 +102,14 @@ class TodoController extends Controller
 
         $todo->update($request->only(['title', 'description', 'list_id', 'priority', 'status', 'due_date']));
 
-        return redirect()->route('todos.index')->with('success', 'Todo updated successfully.');
+        return redirect()->route('tasks.index')->with('success', 'Todo updated successfully.');
     }
 
     public function destroy(Todo $todo)
     {
         $this->authorize('delete', $todo);
         $todo->delete();
-        return redirect()->route('todos.index')->with('success', 'Todo deleted successfully.');
+        return redirect()->route('tasks.index')->with('success', 'Todo deleted successfully.');
     }
 
     public function toggleStatus(Todo $todo)
@@ -112,5 +120,54 @@ class TodoController extends Controller
             'completed_at' => $todo->status === 'completed' ? now() : null,
         ]);
         return back()->with('success', 'Todo status updated.');
+    }
+
+    // New methods for sidebar pages
+    public function kanban()
+    {
+        $todos = Auth::user()->todos()->orderBy('sort_order')->get();
+        return view('todos.kanban', compact('todos'));
+    }
+
+    public function calendar()
+    {
+        $todos = Auth::user()->todos()->whereNotNull('due_date')->get();
+        return view('todos.calendar', compact('todos'));
+    }
+
+    public function archive()
+    {
+        $todos = Auth::user()->todos()->onlyTrashed()->get();
+        return view('todos.archive', compact('todos'));
+    }
+
+    public function updateStatus(Request $request, Todo $todo)
+    {
+        $this->authorize('update', $todo);
+
+        $request->validate([
+            'status' => 'required|in:pending,in_progress,completed',
+        ]);
+
+        $todo->update([
+            'status' => $request->status,
+            'completed_at' => $request->status === 'completed' ? now() : null,
+        ]);
+
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Status updated']);
+        }
+
+        return back()->with('success', 'Status updated successfully.');
+    }
+
+    public function restore($id)
+    {
+        $todo = Todo::onlyTrashed()->findOrFail($id);
+        $this->authorize('update', $todo);
+        
+        $todo->restore();
+        
+        return redirect()->route('archive')->with('success', 'Todo restored successfully.');
     }
 }
