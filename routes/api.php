@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\CalendarController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +50,14 @@ Route::middleware('auth:sanctum')->group(function () {
     // Dashboard routes
     Route::prefix('dashboard')->group(function () {
         Route::get('stats', [DashboardController::class, 'stats']);
+    });
+
+    // Calendar routes
+    Route::prefix('calendar')->group(function () {
+        Route::get('tasks', [CalendarController::class, 'getTasks']);
+        Route::post('tasks', [CalendarController::class, 'createTask']);
+        Route::put('tasks/{id}/reschedule', [CalendarController::class, 'rescheduleTask']);
+        Route::get('events', [CalendarController::class, 'getEvents']);
     });
 
     // User routes
