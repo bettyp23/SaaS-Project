@@ -38,13 +38,9 @@
     </div>
 
     <!-- Categories Grid -->
-    @php
-        $categories = \App\Models\Tag::all();
-    @endphp
-
-    @if($categories->count() > 0)
+    @if($tags->count() > 0)
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
-            @foreach($categories as $tag)
+            @foreach($tags as $tag)
                 <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); border-left: 4px solid {{ $tag->color ?? '#667eea' }};">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <h3 style="color: #333; font-size: 18px; font-weight: 600;">{{ $tag->name }}</h3>

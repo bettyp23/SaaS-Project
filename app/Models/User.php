@@ -86,6 +86,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get the tags for the user.
+     */
+    public function tags()
+    {
+        return $this->hasMany(Tag::class);
+    }
+
+    /**
      * Get the teams owned by the user.
      */
     public function ownedTeams()

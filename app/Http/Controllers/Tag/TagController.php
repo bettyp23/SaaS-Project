@@ -17,7 +17,7 @@ class TagController extends Controller
     public function index()
     {
         $tags = Auth::user()->tags()->get();
-        return view('tags.index', compact('tags'));
+        return view('categories', compact('tags'));
     }
 
     public function store(Request $request)
@@ -33,6 +33,17 @@ class TagController extends Controller
             'user_id' => Auth::id(),
         ]);
 
-        return back()->with('success', 'Tag created successfully.');
+        return back()->with('success', 'Category created successfully.');
+    }
+
+    public function destroy(Tag $tag)
+    {
+        // Check authorization
+        if ($tag->user_id !== Auth::id()) {
+            abort(403);
+        }
+        
+        $tag->delete();
+        return back()->with('success', 'Category deleted successfully.');
     }
 }
