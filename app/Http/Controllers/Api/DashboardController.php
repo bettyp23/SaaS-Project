@@ -1,19 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
-    public function index()
+    public function stats()
     {
         $user = Auth::user();
         
@@ -34,15 +29,6 @@ class DashboardController extends Controller
             'urgent' => $user->todos()->where('priority', 'urgent')->count(),
         ];
         
-        // Upcoming deadlines (next 7 days)
-        $upcomingDeadlines = $user->todos()
-            ->whereNotNull('due_date')
-            ->where('status', '!=', 'completed')
-            ->whereBetween('due_date', [now(), now()->addDays(7)])
-            ->orderBy('due_date', 'asc')
-            ->take(10)
-            ->get();
-        
         // Overdue tasks
         $overdueTasks = $user->todos()
             ->whereNotNull('due_date')
@@ -55,9 +41,6 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
-        
-        // Category/tag statistics
-        $userTags = $user->tags()->withCount('todos')->get();
         
         // Weekly productivity trend (last 7 days)
         $productivityTrend = [];
@@ -76,31 +59,26 @@ class DashboardController extends Controller
             ];
         }
         
-        // High priority tasks
-        $highPriorityTasks = $user->todos()
-            ->whereIn('priority', ['high', 'urgent'])
-            ->where('status', '!=', 'completed')
-            ->orderBy('priority', 'desc')
-            ->take(5)
-            ->get();
-        
-        // Get current date info
-        $today = Carbon::today();
-        
-        return view('dashboard', compact(
-            'totalTodos',
-            'completedTodos',
-            'inProgressTodos',
-            'pendingTodos',
-            'completionRate',
-            'priorityDistribution',
-            'upcomingDeadlines',
-            'overdueTasks',
-            'recentTodos',
-            'userTags',
-            'productivityTrend',
-            'highPriorityTasks',
-            'today'
-        ));
+        return response()->json([
+            'totalTodos' => $totalTodos,
+            'completedTodos' => $completedTodos,
+            'inProgressTodos' => $inProgressTodos,
+            'pendingTodos' => $pendingTodos,
+            'completionRate' => $completionRate,
+            'priorityDistribution' => $priorityDistribution,
+            'overdueTasks' => $overdueTasks,
+            'recentTodos' => $recentTodos->map(function($todo) {
+                return [
+                    'id' => $todo->id,
+                    'title' => $todo->title,
+                    'status' => $todo->status,
+                    'priority' => $todo->priority,
+                    'due_date' => $todo->due_date,
+                    'created_at' => $todo->created_at,
+                ];
+            }),
+            'productivityTrend' => $productivityTrend,
+            'timestamp' => now()->toIso8601String()
+        ]);
     }
 }
